@@ -1,23 +1,24 @@
 {
-  "name": "Angel Breath",
-  "short_name": "Angel",
+  "name": "Angel Breath 覺察呼吸",
+  "short_name": "Angel Breath",
+  "description": "提供不同年齡層的覺察金句與呼吸練習",
   "start_url": "index.html",
   "display": "standalone",
+  "orientation": "portrait",
   "background_color": "#2C392C",
   "theme_color": "#2C392C",
   "icons": [
     {
       "src": "https://img.icons8.com/ios-filled/192/F2D388/clover.png",
+      "type": "image/png",
       "sizes": "192x192",
-      "type": "image/png"
+      "purpose": "any maskable"
     },
     {
       "src": "https://img.icons8.com/ios-filled/512/F2D388/clover.png",
+      "type": "image/png",
       "sizes": "512x512",
-      "type": "image/png"
+      "purpose": "any maskable"
     }
   ]
 }
-
-
-
