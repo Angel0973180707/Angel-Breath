@@ -1,1 +1,186 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Angel Breath</title>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        :root { --bg: #3D523D; --light: #F2E9E1; --gold: #F2D388; --glass: rgba(255, 255, 255, 0.12); }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
+        
+        body { 
+            margin: 0; font-family: -apple-system, "PingFang TC", sans-serif; 
+            height: 100dvh; background: var(--bg); color: var(--light); 
+            display: flex; justify-content: center; overflow: hidden; 
+        }
+
+        .container { 
+            width: 100%; max-width: 420px; height: 100dvh; 
+            padding: 15px 20px; display: flex; flex-direction: column; 
+            justify-content: space-between; 
+        }
+        
+        header h1 { font-size: 1.8rem; font-weight: 300; letter-spacing: 12px; color: var(--gold); margin: 5px 0; text-align: center; padding-left: 12px; }
+
+        .intro-box { 
+            background: var(--glass); padding: 20px; border-radius: 24px; 
+            text-align: center; border: 1px solid rgba(255,255,255,0.1);
+            min-height: 130px; display: flex; flex-direction: column; justify-content: center; align-items: center;
+        }
+        .usage-tag { font-size: 0.75rem; color: var(--gold); opacity: 0.8; letter-spacing: 2px; margin-bottom: 8px; }
+        .quote-text { font-size: 1.05rem; line-height: 1.6; letter-spacing: 1.2px; font-style: italic; }
+
+        .label { font-size: 0.75rem; opacity: 0.7; margin: 15px 0 8px 5px; letter-spacing: 1.5px; }
+        
+        /* 🔥 徹底修正重疊：強制 Flex 分配與禁止換行 */
+        .row { 
+            width: 100%; background: var(--glass); border-radius: 50px; 
+            padding: 5px; display: flex; border: 1px solid rgba(255,255,255,0.1); gap: 8px;
+            justify-content: space-around;
+        }
+        .opt { 
+            flex: 1; text-align: center; font-size: 0.9rem; cursor: pointer; 
+            opacity: 0.4; padding: 12px 0; border-radius: 40px; transition: all 0.3s;
+            white-space: nowrap; /* 防止文字擠壓換行 */
+        }
+        .opt.active { opacity: 1; background: var(--gold); color: var(--bg); font-weight: 600; }
+
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; margin-top: 10px; }
+        .btn { 
+            background: var(--glass); border: 1px solid rgba(255,255,255,0.1); 
+            border-radius: 24px; padding: 20px 10px; text-align: center; 
+            cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 10px;
+        }
+        .btn:active { transform: scale(0.95); }
+        .btn span { font-size: 2.2rem; }
+        .btn p { margin: 0; font-size: 0.95rem; letter-spacing: 2px; }
+
+        .page { display: none; height: 100%; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+        .active-page { display: flex; }
+
+        .breath-circle { 
+            width: 130px; height: 130px; background: radial-gradient(circle, var(--gold) 0%, transparent 75%); 
+            border-radius: 50%; display: flex; align-items: center; justify-content: center; 
+            animation: breathe 4s infinite ease-in-out; margin-bottom: 40px; 
+        }
+        #timer { font-size: 2.8rem; font-weight: 200; }
+        .step-box { width: 90%; min-height: 180px; }
+        .sense-tag { color: var(--gold); margin-bottom: 20px; font-size: 1.1rem; letter-spacing: 6px; font-weight: bold; }
+        .step-text { font-size: 1.6rem; line-height: 1.6; font-weight: 300; }
+
+        .footer { font-size: 0.8rem; opacity: 0.5; text-align: center; padding: 15px 0; display: flex; justify-content: center; gap: 25px; }
+        .footer a { color: var(--gold); text-decoration: none; border-bottom: 1px solid rgba(242, 211, 136, 0.3); }
+
+        @keyframes breathe { 0%,100% {transform: scale(0.85); opacity: 0.3;} 50% {transform: scale(1.15); opacity: 0.7;} }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="home-page" class="page active-page" style="justify-content: space-between;">
+        <header><h1>ANGEL</h1></header>
+
+        <div class="intro-box">
+            <span class="usage-tag">時機：偏見起時，先回歸呼吸</span>
+            <div id="random-quote" class="quote-text">簡單的覺察，<br>就是療癒的開始。</div>
+        </div>
+
+        <div>
+            <div class="label">練習停留</div>
+            <div class="row" id="t-row">
+                <div id="t-10" class="opt active" onclick="setCfg('t',10)">10秒</div>
+                <div id="t-20" class="opt" onclick="setCfg('t',20)">20秒</div>
+                <div id="t-30" class="opt" onclick="setCfg('t',30)">30秒</div>
+            </div>
+            <div class="label">語音導引</div>
+            <div class="row" id="v-row">
+                <div id="v-on" class="opt active" onclick="setCfg('v','on')">啟動</div>
+                <div id="v-off" class="opt" onclick="setCfg('v','off')">靜音</div>
+            </div>
+        </div>
+
+        <div class="grid">
+            <div class="btn" onclick="goPractice('kids')"><span>🎨</span><p>小小孩</p></div>
+            <div class="btn" onclick="goPractice('teen')"><span>🎧</span><p>青少年</p></div>
+            <div class="btn" onclick="goPractice('adult')"><span>🌿</span><p>大人們</p></div>
+            <div class="btn" onclick="goPractice('all')"><span>✨</span><p>隨機</p></div>
+        </div>
+        
+        <div class="footer">
+            <a href="https://forms.gle/PsxMHv62JZKe2GZm7" target="_blank">📋 練習回饋</a>
+        </div>
+    </div>
+
+    <div id="content-page" class="page">
+        <div class="breath-circle"><div id="timer"></div></div>
+        <div id="step-content" class="step-box"></div>
+    </div>
+</div>
+
+<script>
+    const data = {
+        quotes: {
+            kids: ["你像小樹一樣，<br>慢慢呼吸就會長大。", "你的心情像天氣，<br>雲飄走了太陽就出來了。", "你是最棒的小寶貝，<br>大家都很愛你喔。", "抱抱自己，<br>感覺心跳跳得好神氣。", "像吹泡泡一樣，<br>把煩惱輕輕吹走吧。", "閉上眼睛，<br>聽聽肚子裡的小秘密。", "每一次吸氣，<br>都像在聞最香的花。", "你的眼睛亮晶晶，<br>能發現世界的小寶藏。", "不管是哭哭或笑笑，<br>Angel 都會陪著你。", "現在就給自己<br>一個甜甜的微笑吧。"],
+            teen: ["外面的標籤是別人的，<br>裡面的空間是自己的。", "你不必總是完美，<br>真實的你更有力量。", "情緒就像彈幕，<br>讓它飄過去就好。", "在人群中覺得吵鬧時，<br>回到呼吸的節奏裡。", "別人的期待，<br>不一定要成為你的阻礙。", "感受當下，<br>那是唯一屬於你的時間。", "現在的混亂，<br>只是為了重組更好的你。", "不需要證明什麼，<br>你的存在就有價值。", "暫停不是放棄，<br>是為了更清醒地前進。", "你的內心深處，<br>有一片誰也闖不進的森林。"],
+            adult: ["偏見是心靈的陰影，<br>覺察則是光。", "在情緒的海浪下，<br>你依然是平靜的海床。", "最重要的不是發生了什麼，<br>而是你如何看它。", "看見自己的偏見，<br>它就開始失去了力量。", "暫停一下，讓靈魂<br>跟上你的腳步。", "放下評論的眼光，<br>世界會展現新的樣貌。", "偏見往往來自恐懼，<br>而恐懼來自不了解。", "心如明鏡，<br>只是反映而不評判。", "練習在回應之前，<br>留出一口呼吸的空間。", "簡單的覺察，<br>就是療癒的開始。"]
+        },
+        steps: [
+            {s:"👀 視覺", t:"找一個你最喜歡的<br>顏色，注視它。"},
+            {s:"👂 聽覺", t:"閉上眼，聽聽看<br>最遠處的聲音。"},
+            {s:"✋ 觸覺", t:"感覺雙腳踩在地面<br>穩穩的力量。"},
+            {s:"🌬️ 呼吸", t:"觀察氣息進入鼻腔時<br>微涼的感覺。"}
+        ]
+    };
+
+    let cfg = { t: 10, v: 'on' };
+
+    function setCfg(type, val) {
+        cfg[type] = val;
+        document.querySelectorAll(`#${type}-row .opt`).forEach(o => o.classList.remove('active'));
+        document.getElementById(`${type}-${val}`).classList.add('active');
+    }
+
+    function goPractice(type) {
+        let pool = type === 'all' ? [...data.quotes.kids, ...data.quotes.teen, ...data.quotes.adult] : data.quotes[type];
+        document.getElementById('random-quote').innerHTML = pool[Math.floor(Math.random() * pool.length)];
+        
+        document.getElementById('home-page').classList.remove('active-page');
+        document.getElementById('content-page').classList.add('active-page');
+        
+        let shuffled = data.steps.sort(() => 0.5 - Math.random()).slice(0, 2);
+        play(shuffled);
+    }
+
+    function play(steps) {
+        let i = 0;
+        const run = () => {
+            if (i >= steps.length) {
+                document.getElementById('step-content').innerHTML = "<div class='step-text'>練習完成 ✨<br><br>帶著平靜回到生活。</div>";
+                setTimeout(() => location.reload(), 3000);
+                return;
+            }
+            const item = steps[i];
+            document.getElementById('step-content').innerHTML = `<div class="sense-tag">${item.s}</div><div class="step-text">${item.t}</div>`;
+            
+            if(cfg.v === 'on') {
+                window.speechSynthesis.cancel();
+                const u = new SpeechSynthesisUtterance(item.t.replace('<br>', ''));
+                u.lang = 'zh-TW'; u.rate = 0.9;
+                window.speechSynthesis.speak(u);
+            }
+
+            let count = cfg.t;
+            document.getElementById('timer').innerText = count;
+            const timer = setInterval(() => {
+                count--;
+                document.getElementById('timer').innerText = count > 0 ? count : "✨";
+                if (count <= 0) { clearInterval(timer); i++; setTimeout(run, 1200); }
+            }, 1000);
+        };
+        run();
+    }
+</script>
+</body>
+</html>
 
