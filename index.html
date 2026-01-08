@@ -1,1 +1,97 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+    <title>Angel Breath</title>
+    <link rel="manifest" href="manifest.json">
+    <style>
+        :root { --bg: #2C392C; --light: #F2E9E1; --gold: #F2D388; --glass: rgba(255, 255, 255, 0.08); }
+        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; outline: none; }
+        body { margin: 0; font-family: -apple-system, "PingFang TC", sans-serif; height: 100dvh; background: var(--bg); color: var(--light); display: flex; justify-content: center; overflow: hidden; }
+        
+        .container { width: 100%; max-width: 420px; height: 100dvh; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; }
+        header h1 { font-size: 2rem; font-weight: 300; letter-spacing: 12px; color: var(--gold); margin: 10px 0; text-align: center; padding-left: 12px; }
+
+        /* 金句與時機 */
+        .intro-box { background: var(--glass); padding: 25px 20px; border-radius: 28px; text-align: center; border: 1px solid rgba(255,255,255,0.05); min-height: 140px; display: flex; flex-direction: column; justify-content: center; }
+        .usage-tag { font-size: 0.75rem; color: var(--gold); opacity: 0.8; letter-spacing: 2px; margin-bottom: 10px; font-weight: bold; }
+        .quote-text { font-size: 1.1rem; line-height: 1.6; letter-spacing: 1.2px; font-style: italic; }
+
+        /* 設定區：擴散平均 */
+        .label { font-size: 0.75rem; opacity: 0.6; margin: 15px 0 8px 5px; letter-spacing: 2px; }
+        .row { width: 100%; background: var(--glass); border-radius: 50px; padding: 5px; display: flex; border: 1px solid rgba(255,255,255,0.1); gap: 10px; }
+        .opt { flex: 1; text-align: center; font-size: 0.9rem; cursor: pointer; opacity: 0.3; padding: 12px 0; border-radius: 40px; transition: 0.3s; white-space: nowrap; }
+        .opt.active { opacity: 1; background: var(--gold); color: var(--bg); font-weight: bold; }
+
+        /* 年齡分流按鈕 */
+        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 15px; }
+        .btn { background: var(--glass); border: 1px solid rgba(255,255,255,0.05); border-radius: 24px; padding: 22px 10px; text-align: center; cursor: pointer; display: flex; flex-direction: column; align-items: center; gap: 10px; }
+        .btn span { font-size: 2.2rem; }
+        .btn p { margin: 0; font-size: 0.95rem; letter-spacing: 2px; }
+
+        /* 隱藏頁面 */
+        .page { display: none; height: 100%; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
+        .active-page { display: flex; }
+
+        /* 練習動畫 */
+        .breath-circle { width: 130px; height: 130px; background: radial-gradient(circle, var(--gold) 0%, transparent 75%); border-radius: 50%; display: flex; align-items: center; justify-content: center; animation: breathe 4s infinite ease-in-out; margin-bottom: 40px; }
+        #timer { font-size: 3rem; font-weight: 200; }
+        .sense-tag { color: var(--gold); margin-bottom: 20px; font-size: 1.1rem; letter-spacing: 6px; font-weight: bold; }
+        .step-text { font-size: 1.7rem; line-height: 1.6; font-weight: 300; padding: 0 20px; }
+
+        /* 教學與表單 */
+        .footer { font-size: 0.75rem; opacity: 0.5; text-align: center; padding-bottom: 10px; display: flex; justify-content: center; gap: 20px; }
+        .footer a { color: var(--gold); text-decoration: none; border-bottom: 1px solid rgba(242, 211, 136, 0.2); cursor: pointer; }
+
+        @keyframes breathe { 0%,100% {transform: scale(0.8); opacity: 0.3;} 50% {transform: scale(1.1); opacity: 0.6;} }
+    </style>
+</head>
+<body>
+
+<div class="container">
+    <div id="home-page" class="page active-page" style="justify-content: space-between;">
+        <header><h1>ANGEL</h1></header>
+
+        <div class="intro-box">
+            <span class="usage-tag">時機：偏見起時，先回歸呼吸</span>
+            <div id="random-quote" class="quote-text">每一次呼吸，都是一個重新開始的機會。</div>
+        </div>
+
+        <div>
+            <div class="label">練習停留</div>
+            <div class="row" id="t-row">
+                <div id="t-10" class="opt active" onclick="setCfg('t',10)">10秒</div>
+                <div id="t-20" class="opt" onclick="setCfg('t',20)">20秒</div>
+                <div id="t-30" class="opt" onclick="setCfg('t',30)">30秒</div>
+            </div>
+            <div class="label" style="margin-top:10px;">語音提示</div>
+            <div class="row" id="v-row">
+                <div id="v-on" class="opt active" onclick="setCfg('v','on')">啟動</div>
+                <div id="v-off" class="opt" onclick="setCfg('v','off')">靜音</div>
+            </div>
+        </div>
+
+        <div class="grid">
+            <div class="btn" onclick="goPractice('kids')"><span>🎨</span><p>小小孩</p></div>
+            <div class="btn" onclick="goPractice('teen')"><span>🎧</span><p>青少年</p></div>
+            <div class="btn" onclick="goPractice('adult')"><span>🌿</span><p>大人們</p></div>
+            <div class="btn" onclick="goPractice('all')"><span>✨</span><p>隨機選</p></div>
+        </div>
+        
+        <div class="footer">
+            <a onclick="showInstall()">📲 安裝教學</a>
+            <a href="https://forms.gle/PsxMHv62JZKe2GZm7" target="_blank">📋 練習回饋</a>
+        </div>
+    </div>
+
+    <div id="content-page" class="page">
+        <div class="breath-circle"><div id="timer"></div></div>
+        <div id="step-content"></div>
+    </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
 
