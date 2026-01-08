@@ -1,3 +1,10 @@
+if ('serviceWorker' in navigator) {
+  window.addEventListener('load', () => {
+    navigator.serviceWorker.register('./sw.js')
+      .then(reg => console.log('Service Worker 註冊成功！', reg))
+      .catch(err => console.log('Service Worker 註冊失敗：', err));
+  });
+}
 const data = {
     quotes: {
         kids: ["你像小樹一樣，慢慢呼吸就會長大。", "心情像天氣，雲飄走了太陽就出來了。", "你是最棒的小寶貝，大家都很愛你。", "抱抱自己，感覺心跳跳得好神氣。", "像吹泡泡一樣，把煩惱輕輕吹走。", "閉上眼睛，聽聽肚子裡的小秘密。", "每一次吸氣，都像在聞最香的花。", "你的眼睛亮晶晶，能發現小寶藏。", "不管是哭哭或笑笑，Angel 都陪著你。", "現在就給自己一個甜甜的微笑吧。"],
