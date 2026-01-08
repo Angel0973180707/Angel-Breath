@@ -1,105 +1,102 @@
 <!DOCTYPE html>
 <html lang="zh-TW">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
-    <title>Angel Breath</title>
-    <link rel="manifest" href="manifest.json">
-    <style>
-        :root { --bg: #1a241a; --light: #F2E9E1; --gold: #F2D388; --glass: rgba(255, 255, 255, 0.08); }
-        * { box-sizing: border-box; -webkit-tap-highlight-color: transparent; }
-        body { margin: 0; font-family: -apple-system, "PingFang TC", sans-serif; height: 100dvh; background: var(--bg); color: var(--light); display: flex; justify-content: center; overflow: hidden; }
-        
-        .container { width: 100%; max-width: 420px; height: 100dvh; padding: 20px; display: flex; flex-direction: column; justify-content: space-between; }
-        header h1 { font-size: 2.2rem; font-weight: 300; letter-spacing: 12px; color: var(--gold); text-align: center; margin: 10px 0; padding-left: 12px; }
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover" />
+  <meta name="theme-color" content="#1a241a" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent" />
 
-        /* 金句顯示區 */
-        .intro-box { background: var(--glass); padding: 25px; border-radius: 28px; text-align: center; border: 1px solid rgba(255,255,255,0.05); min-height: 160px; display: flex; flex-direction: column; justify-content: center; }
-        .usage-tag { font-size: 0.75rem; color: var(--gold); opacity: 0.8; margin-bottom: 12px; font-weight: bold; letter-spacing: 1px; }
-        #quote-display { font-size: 1.15rem; line-height: 1.6; font-style: italic; }
+  <title>Angel Breath</title>
 
-        /* 選項平均分佈區 */
-        .label { font-size: 0.8rem; opacity: 0.6; margin: 15px 0 8px 5px; text-align: center; letter-spacing: 2px; }
-        .row { display: flex; background: var(--glass); border-radius: 50px; padding: 5px; border: 1px solid rgba(255,255,255,0.1); gap: 8px; }
-        .opt { flex: 1; text-align: center; padding: 12px 0; cursor: pointer; opacity: 0.3; border-radius: 40px; transition: 0.3s; font-size: 0.9rem; }
-        .opt.active { opacity: 1; background: var(--gold); color: var(--bg); font-weight: bold; }
+  <link rel="manifest" href="manifest.json" />
+  <link rel="icon" href="icons/icon-192.png" />
+  <link rel="apple-touch-icon" href="icons/icon-192.png" />
 
-        /* 下方按鈕 2x2 矩陣 */
-        .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; margin-top: 5px; }
-        .btn { background: var(--glass); border-radius: 24px; padding: 20px 10px; text-align: center; cursor: pointer; border: 1px solid rgba(255,255,255,0.05); transition: 0.2s; display: flex; flex-direction: column; align-items: center; gap: 8px; }
-        .btn:active { background: rgba(255,255,255,0.15); transform: scale(0.96); }
-        .btn span { font-size: 1.8rem; }
-        .btn p { margin: 0; font-size: 0.9rem; color: var(--light); letter-spacing: 1px; }
-
-        /* 教學與連結 */
-        .footer { display: flex; justify-content: space-around; padding: 15px 0 10px 0; font-size: 0.8rem; }
-        .footer a { color: var(--gold); text-decoration: none; opacity: 0.7; cursor: pointer; border-bottom: 1px solid rgba(242, 211, 136, 0.2); }
-
-        /* 練習切換 */
-        .page { display: none; height: 100%; flex-direction: column; align-items: center; justify-content: center; text-align: center; }
-        .active-page { display: flex; }
-        .breath-circle { width: 140px; height: 140px; background: radial-gradient(circle, var(--gold) 0%, transparent 70%); border-radius: 50%; display: flex; align-items: center; justify-content: center; animation: breathe 4s infinite ease-in-out; margin-bottom: 40px; }
-        #timer { font-size: 3.5rem; font-weight: 200; }
-        #step-content { font-size: 1.6rem; line-height: 1.6; padding: 0 25px; font-weight: 300; }
-
-        /* 彈窗 */
-        #modal { display: none; position: fixed; top:0; left:0; width:100%; height:100%; background: rgba(0,0,0,0.85); z-index:100; justify-content:center; align-items:center; }
-        .modal-content { background: #242f24; padding: 30px; border-radius: 24px; border: 1px solid var(--gold); width: 85%; max-width: 320px; }
-        
-        @keyframes breathe { 0%,100% {transform: scale(0.85); opacity: 0.4;} 50% {transform: scale(1.1); opacity: 0.7;} }
-    </style>
+  <link rel="stylesheet" href="style.css" />
 </head>
+
 <body>
-    <div class="container">
-        <div id="home-page" class="page active-page" style="justify-content: space-between;">
-            <header><h1>ANGEL</h1></header>
-            
-            <div class="intro-box">
-                <span class="usage-tag">時機：偏見起時，先回歸呼吸</span>
-                <div id="quote-display">點擊下方分類，開啟覺察練習</div>
-            </div>
+  <div class="container">
+    <!-- Home Page -->
+    <section id="home-page" class="page active-page home">
+      <header class="header">
+        <h1>ANGEL</h1>
+      </header>
 
-            <div>
-                <div class="label">練習停留</div>
-                <div class="row" id="t-row">
-                    <div id="t-10" class="opt active" onclick="setCfg('t',10)">10秒</div>
-                    <div id="t-20" class="opt" onclick="setCfg('t',20)">20秒</div>
-                    <div id="t-30" class="opt" onclick="setCfg('t',30)">30秒</div>
-                </div>
-                <div class="label">語音導引</div>
-                <div class="row" id="v-row">
-                    <div id="v-on" class="opt active" onclick="setCfg('v','on')">啟動</div>
-                    <div id="v-off" class="opt" onclick="setCfg('v','off')">靜音</div>
-                </div>
-            </div>
+      <div class="intro-box" role="region" aria-live="polite">
+        <span class="usage-tag">時機：偏見起時，先回歸呼吸</span>
+        <div id="quote-display" class="quote-display">點擊下方分類，開啟覺察練習</div>
+      </div>
 
-            <div class="grid">
-                <div class="btn" onclick="startFlow('kids')"><span>🎨</span><p>小小孩</p></div>
-                <div class="btn" onclick="startFlow('primary')"><span>🎒</span><p>孩子們</p></div>
-                <div class="btn" onclick="startFlow('teen')"><span>🎧</span><p>青少年</p></div>
-                <div class="btn" onclick="startFlow('adult')"><span>🌿</span><p>大人們</p></div>
-            </div>
-
-            <div class="footer">
-                <a onclick="openModal()">📲 安裝教學</a>
-                <a href="https://forms.gle/PsxMHv62JZKe2GZm7" target="_blank">📋 意見回饋</a>
-            </div>
+      <div class="cfg">
+        <div class="label">練習停留</div>
+        <div class="row" id="t-row" role="tablist" aria-label="練習停留秒數">
+          <button id="t-10" class="opt active" type="button" data-cfg="t" data-val="10">10秒</button>
+          <button id="t-20" class="opt" type="button" data-cfg="t" data-val="20">20秒</button>
+          <button id="t-30" class="opt" type="button" data-cfg="t" data-val="30">30秒</button>
         </div>
 
-        <div id="content-page" class="page">
-            <div class="breath-circle"><div id="timer"></div></div>
-            <div id="step-content"></div>
+        <div class="label">語音導引</div>
+        <div class="row" id="v-row" role="tablist" aria-label="語音導引">
+          <button id="v-on" class="opt active" type="button" data-cfg="v" data-val="on">啟動</button>
+          <button id="v-off" class="opt" type="button" data-cfg="v" data-val="off">靜音</button>
         </div>
+      </div>
+
+      <div class="grid" aria-label="年齡分流">
+        <button class="btn" type="button" data-cat="kids" aria-label="小小孩">
+          <span class="emoji" aria-hidden="true">🎨</span>
+          <p>小小孩</p>
+        </button>
+        <button class="btn" type="button" data-cat="primary" aria-label="孩子們">
+          <span class="emoji" aria-hidden="true">🎒</span>
+          <p>孩子們</p>
+        </button>
+        <button class="btn" type="button" data-cat="teen" aria-label="青少年">
+          <span class="emoji" aria-hidden="true">🎧</span>
+          <p>青少年</p>
+        </button>
+        <button class="btn" type="button" data-cat="adult" aria-label="大人們">
+          <span class="emoji" aria-hidden="true">🌿</span>
+          <p>大人們</p>
+        </button>
+      </div>
+
+      <footer class="footer">
+        <button class="link" type="button" id="open-install">📲 安裝教學</button>
+        <a class="link" href="https://forms.gle/PsxMHv62JZKe2GZm7" target="_blank" rel="noopener">📋 意見回饋</a>
+      </footer>
+    </section>
+
+    <!-- Content Page -->
+    <section id="content-page" class="page practice" aria-live="polite">
+      <div class="breath-circle" aria-hidden="true"></div>
+
+      <div class="practice-stack">
+        <div id="timer" class="timer">10</div>
+        <div id="step-content" class="step-content">準備開始…</div>
+
+        <div class="practice-actions">
+          <button id="btn-skip" class="ghost" type="button">跳過下一步</button>
+          <button id="btn-back" class="ghost" type="button">回主頁</button>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- Install Modal -->
+  <div id="modal" class="modal" aria-hidden="true">
+    <div class="modal-content" role="dialog" aria-modal="true" aria-label="安裝教學">
+      <h3>將 Angel 安裝至桌面</h3>
+      <p>
+        iPhone：點擊下方「分享」按鈕，選擇「加入主螢幕」。<br><br>
+        Android：點擊右上角「三點」，選擇「安裝應用程式」。
+      </p>
+      <button id="close-install" class="modal-btn" type="button">我知道了</button>
     </div>
+  </div>
 
-    <div id="modal" onclick="closeModal()">
-        <div class="modal-content" onclick="event.stopPropagation()">
-            <h3 style="color:var(--gold); margin-top:0;">將 Angel 安裝至桌面</h3>
-            <p style="font-size:0.9rem; line-height:1.6;">iPhone: 點擊下方「分享」按鈕，選擇「加入主螢幕」。<br><br>Android: 點擊右上角「三點」，選擇「安裝應用程式」。</p>
-            <button onclick="closeModal()" style="width:100%; background:var(--gold); color:#1a241a; border:none; padding:12px; border-radius:12px; margin-top:10px; font-weight:bold;">我知道了</button>
-        </div>
-    </div>
-
-    <script src="script.js"></script>
+  <script src="script.js"></script>
 </body>
 </html>
