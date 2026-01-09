@@ -1,6 +1,6 @@
 /* Angel Breath - sw.js (complete overwrite) */
 
-const CACHE_VERSION = "angel-breath-v1.0.1"; // ✅ 每次改版請 +1（很重要）
+const CACHE_VERSION = "angel-breath-v1.0.2"; // ✅ 每次改版請 +1（很重要）
 const PRECACHE = `${CACHE_VERSION}-precache`;
 const RUNTIME = `${CACHE_VERSION}-runtime`;
 
