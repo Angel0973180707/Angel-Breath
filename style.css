@@ -34,7 +34,10 @@ body{
   max-width:420px;
   height:100dvh;
   padding:20px;
-  padding-bottom: calc(20px + env(safe-area-inset-bottom)); /* ✅ 底部安全距離 */
+
+  /* ✅ 关键：Android 底部導覽列/手勢區保護（避免按鈕被吃） */
+  padding-bottom: calc(52px + env(safe-area-inset-bottom));
+
   display:flex;
   flex-direction:column;
   justify-content:space-between;
@@ -48,6 +51,11 @@ body{
 }
 .active-page{
   display:flex;
+}
+
+/* ✅ 主頁再保底：最下面區塊（grid/footer）不被壓住 */
+.home{
+  padding-bottom: 10px;
 }
 
 /* Header */
@@ -90,10 +98,15 @@ header h1{
   font-style:italic;
   letter-spacing:0.6px;
 
-  /* ✅ 避免「練／習」這類怪斷行 */
+  /* ✅ 避免「練／習」怪斷行 */
   word-break: keep-all;
   line-break: strict;
   text-wrap: balance;
+}
+
+/* 控制區 */
+.cfg{
+  margin-top: 4px;
 }
 
 /* 控制區標題 */
@@ -128,6 +141,11 @@ header h1{
   font-size:0.95rem;
   min-height:44px; /* ✅ 易點擊 */
   user-select:none;
+
+  /* button reset */
+  border:none;
+  background:transparent;
+  color:inherit;
 }
 
 .opt:active{
@@ -147,8 +165,8 @@ header h1{
   display:grid;
   grid-template-columns: 1fr 1fr;
   gap:12px;
-  margin-top:10px;
-  margin-bottom:6px;
+  margin-top:12px;
+  margin-bottom:12px; /* ✅ 多留一點，避免貼底 */
 }
 
 /* 年齡卡片按鈕 */
@@ -165,9 +183,12 @@ header h1{
   align-items:center;
   justify-content:center;
   gap:8px;
-  min-height:82px; /* ✅ 手機好點 */
+  min-height:84px; /* ✅ 手機好點 */
   box-shadow: var(--shadow);
   user-select:none;
+
+  /* button reset */
+  color:inherit;
 }
 
 .btn:active{
@@ -175,7 +196,7 @@ header h1{
   transform: scale(0.965); /* ✅ 點擊縮放 */
 }
 
-.btn span{
+.btn .emoji{
   font-size:1.85rem;
   line-height:1;
 }
@@ -193,29 +214,38 @@ header h1{
   display:flex;
   justify-content:space-around;
   align-items:center;
-  padding:14px 0 10px;
+
+  /* ✅ footer 自己也留底，雙重保護 */
+  padding:14px 0 calc(18px + env(safe-area-inset-bottom));
+
   font-size:0.85rem;
   gap:14px;
 }
 
-.footer a{
+.link{
   color:var(--gold);
   text-decoration:none;
   opacity:0.75;
   cursor:pointer;
   border-bottom:1px solid rgba(242,211,136,0.25);
-  padding:6px 2px;
+  padding:8px 6px;
   min-height:44px;
   display:inline-flex;
   align-items:center;
+  justify-content:center;
+
+  /* button reset */
+  background:transparent;
+  border:none;
+  font:inherit;
 }
 
-.footer a:active{
+.link:active{
   opacity:1;
 }
 
 /* 練習頁（呼吸圈） */
-#content-page{
+.practice{
   align-items:center;
   justify-content:center;
   text-align:center;
@@ -227,21 +257,25 @@ header h1{
   height:150px;
   background: radial-gradient(circle, var(--gold) 0%, transparent 70%);
   border-radius:50%;
-  display:flex;
-  align-items:center;
-  justify-content:center;
   animation: breathe 4s infinite ease-in-out;
-  margin-bottom: 22px;
   opacity:0.85;
+  margin-top: 8px;
 }
 
-#timer{
+.practice-stack{
+  display:flex;
+  flex-direction:column;
+  gap:14px;
+  align-items:center;
+}
+
+.timer{
   font-size:3.4rem;
   font-weight:200;
   letter-spacing:2px;
 }
 
-#step-content{
+.step-content{
   font-size:1.55rem;
   line-height:1.65;
   padding:0 22px;
@@ -249,8 +283,33 @@ header h1{
   letter-spacing:0.6px;
 }
 
+.practice-actions{
+  display:flex;
+  gap:10px;
+  margin-top:8px;
+  flex-wrap:wrap;
+  justify-content:center;
+}
+
+.ghost{
+  background: rgba(255,255,255,0.06);
+  border: 1px solid rgba(255,255,255,0.08);
+  color: var(--light);
+  padding:10px 14px;
+  border-radius:16px;
+  min-height:44px;
+  cursor:pointer;
+  box-shadow: 0 10px 20px rgba(0,0,0,0.12);
+  transition: transform .12s ease, background .2s ease, opacity .2s ease;
+}
+
+.ghost:active{
+  transform: scale(0.98);
+  background: rgba(255,255,255,0.10);
+}
+
 /* 彈窗 */
-#modal{
+.modal{
   display:none;
   position:fixed;
   top:0;
@@ -286,7 +345,7 @@ header h1{
   margin:0 0 14px 0;
 }
 
-.modal-content button{
+.modal-btn{
   width:100%;
   background:var(--gold);
   color:var(--bg);
@@ -299,7 +358,7 @@ header h1{
   cursor:pointer;
 }
 
-.modal-content button:active{
+.modal-btn:active{
   transform:scale(0.99);
 }
 
@@ -308,12 +367,32 @@ header h1{
   50% { transform: scale(1.12); opacity: 0.75; }
 }
 
-/* ✅ 小螢幕高度：自動收斂避免擠爆 */
-@media (max-height: 720px){
+/* ✅ 小螢幕高度：自動收斂避免擠爆 & 被吃底 */
+@media (max-height: 760px){
   header h1{ font-size:2.05rem; letter-spacing:10px; }
-  .intro-box{ min-height:150px; padding:26px 22px; }
+
+  .intro-box{
+    min-height:150px;
+    padding:26px 22px;
+  }
+
   #quote-display{ font-size:1.08rem; }
-  .btn{ padding:16px 10px; min-height:78px; }
+
+  .grid{
+    gap:10px;
+    margin-top:10px;
+    margin-bottom:14px;
+  }
+
+  .btn{
+    padding:16px 10px;
+    min-height:78px;
+  }
+
+  .footer{
+    padding-bottom: calc(22px + env(safe-area-inset-bottom));
+  }
+
   .breath-circle{ width:140px; height:140px; }
-  #step-content{ font-size:1.45rem; }
+  .step-content{ font-size:1.45rem; }
   }
