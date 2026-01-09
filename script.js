@@ -299,3 +299,34 @@ document.addEventListener("DOMContentLoaded", () => {
   syncUIFromCfg();
   registerSW();
 });
+// ===== 安裝教學 Modal 綁定（保證可用）=====
+(function bindInstallModal(){
+  const modal = document.getElementById("modal");
+  const openBtn = document.getElementById("open-install");
+  const closeBtn = document.getElementById("close-install");
+
+  if (!modal || !openBtn || !closeBtn) return;
+
+  const openModal = () => {
+    modal.style.display = "flex";
+    modal.setAttribute("aria-hidden", "false");
+  };
+
+  const closeModal = () => {
+    modal.style.display = "none";
+    modal.setAttribute("aria-hidden", "true");
+  };
+
+  openBtn.addEventListener("click", openModal);
+  closeBtn.addEventListener("click", closeModal);
+
+  // 點背景關閉
+  modal.addEventListener("click", (e) => {
+    if (e.target === modal) closeModal();
+  });
+
+  // ESC 關閉（有鍵盤時）
+  document.addEventListener("keydown", (e) => {
+    if (e.key === "Escape") closeModal();
+  });
+})();
